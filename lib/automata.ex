@@ -45,4 +45,25 @@ defmodule Automata do
 
     build_dfa(rest ++ new_states, visited, new_transitions, nfa, finals)
   end
+
+
+  def e_closure(nfa, states) do
+    closure(states, nfa, MapSet.new(states))
+  end
+
+  defp closure([], _nfa, visited), do: visited
+
+  defp closure([state | rest], nfa, visited) do
+    next =
+      Map.get(nfa.transitions, {state, :epsilon}, [])
+      |> MapSet.new()
+
+    new_states =
+      MapSet.difference(next, visited)
+      |> MapSet.to_list()
+
+    visited = MapSet.union(visited, next)
+
+    closure(rest ++ new_states, nfa, visited)
+  end
 end
